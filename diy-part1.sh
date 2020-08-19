@@ -24,9 +24,9 @@
 #
 
 #添加lienol feed源
-#sed -i '$a src-git lean https://github.com/coolsnowwolf/packages' feeds.conf.default
-#cat feeds.conf.default |grep lean
-#echo '====================Add lienol feed source OK!===================='
+sed -i '$a src-git lean https://github.com/coolsnowwolf/packages' feeds.conf.default
+cat feeds.conf.default |grep lean
+echo '====================Add lean feed source OK!===================='
 
 #修改内核版本为5.4
 #sed -i 's/KERNEL_PATCHVER:=4.19/KERNEL_PATCHVER:=5.4/g' target/linux/bcm53xx/Makefile
