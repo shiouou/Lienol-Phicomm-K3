@@ -19,14 +19,20 @@ sed -i "s/'1.openwrt.pool.ntp.org'/'ntp2.aliyun.com'/g" package/base-files/files
 sed -i "s/'2.openwrt.pool.ntp.org'/'ntp3.aliyun.com'/g" package/base-files/files/bin/config_generate
 sed -i "s/'3.openwrt.pool.ntp.org'/'ntp4.aliyun.com'/g" package/base-files/files/bin/config_generate
 cat package/base-files/files/bin/config_generate |grep system.ntp.server=
-echo 'Alert NTP Settings OK!====================='
+echo '=====================Alert NTP Settings OK!====================='
 
 #修改主机名
-sed -i "s/hostname='OpenWrt'/hostname='OpenWrt-Phicomm-K3'/g" package/base-files/files/bin/config_generate
+sed -i "s/hostname='OpenWrt'/hostname='Phicomm-K3'/g" package/base-files/files/bin/config_generate
 cat package/base-files/files/bin/config_generate |grep hostname=
-echo 'Alert Hostname OK!====================='
+echo '=====================Alert Hostname OK!====================='
 
 #添加主页的CPU温度显示
-#sed -i "/<tr><td width=\"33%\"><%:Load Average%>/a \ \t\t<tr><td width=\"33%\"><%:CPU Temperature%></td><td><%=luci.sys.exec(\"sed 's/../&./g' /sys/class/thermal/thermal_zone0/temp|cut -c1-4\")%></td></tr>" feeds/luci/modules/luci-mod-admin-full/luasrc/view/admin_status/index.htm
-#cat feeds/luci/modules/luci-mod-admin-full/luasrc/view/admin_status/index.htm |grep Temperature
-#echo "Add CPU Temperature in Admin Index OK====================="
+sed -i "/<tr><td width=\"33%\"><%:Load Average%>/a \ \t\t<tr><td width=\"33%\"><%:CPU Temperature%></td><td><%=luci.sys.exec(\"sed 's/../&./g' /sys/class/thermal/thermal_zone0/temp|cut -c1-4\")%></td></tr>" feeds/luci/modules/luci-mod-admin-full/luasrc/view/admin_status/index.htm
+cat feeds/luci/modules/luci-mod-admin-full/luasrc/view/admin_status/index.htm |grep Temperature
+echo "=====================Add CPU Temperature in Admin Index OK====================="
+
+#添加主页的修改者信息
+sed -i "/<%=pcdata(ver.luciname)%>/a \ \t\t\t\/ Mod by Favor" feeds/luci/modules/luci-mod-admin-full/luasrc/view/admin_status/index.htm
+cat feeds/luci/modules/luci-mod-admin-full/luasrc/view/admin_status/index.htm |grep Mod
+echo "=====================Add CPU Temperature in Admin Index OK====================="
+
