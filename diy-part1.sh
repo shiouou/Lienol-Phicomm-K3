@@ -25,8 +25,7 @@
 
 #添加lienol feed源
 #sed -i '$a src-git lean https://github.com/coolsnowwolf/packages' feeds.conf.default
-sed -i 's/openwrt-luci.git;dev-17.01/openwrt-luci.git;dev-19.07/g' feeds.conf.default
-cat feeds.conf.default |grep luci
+#cat feeds.conf.default |grep luci
 #echo '====================Add lean feed source OK!===================='
 
 #修改内核版本为5.4
