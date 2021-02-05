@@ -1,37 +1,19 @@
 #!/bin/bash
-#
-# Copyright (c) 2019-2020 P3TERX <https://p3terx.com>
-#
-# This is free software, licensed under the MIT License.
-# See /LICENSE for more information.
-#
-# https://github.com/P3TERX/Actions-OpenWrt
-# File name: diy-part1.sh
-# Description: OpenWrt DIY script part 1 (Before Update feeds)
-#
 
-# Uncomment a feed source
-#sed -i 's/^#\(.*helloworld\)/\1/' feeds.conf.default
+#添加xiaorouji的passwall软件源
+sed -i '$a src-git passwall https://github.com/xiaorouji/openwrt-passwall' feeds.conf.default
+cat feeds.conf.default |grep passwall
+echo '====================Add lienol feed source OK!===================='
 
-#!/bin/bash
-#
-# This is free software, licensed under the MIT License.
-# See /LICENSE for more information.
-#
-# https://github.com/werifesteria/Openwrt-Phicomm-K3
-# File name: diy-part1.sh
-# Description: OpenWrt DIY script part 1 (Before Update feeds)
-#
+#添加pymumu的smartdns软件源
+git clone -b lede https://github.com/pymumu/luci-app-smartdns package/lean/luci-app-smartdns
+ls -la package/lean/ |grep luci-app-smartdns
+echo '====================Add smartdns OK!===================='
 
-#添加lienol feed源
-#sed -i '$a src-git lean https://github.com/coolsnowwolf/packages' feeds.conf.default
-#cat feeds.conf.default |grep luci
-#echo '====================Add lean feed source OK!===================='
-
-#修改内核版本为5.4
-#sed -i 's/KERNEL_PATCHVER:=4.19/KERNEL_PATCHVER:=5.4/g' target/linux/bcm53xx/Makefile
-#cat target/linux/bcm53xx/Makefile |grep KERNEL_PATCHVER
-#echo '====================Alert Kernel Patchver to 5.4 OK!===================='
+#添加woniuzfb的iptvhelper屏幕插件
+#sed -i '$a src-git iptvhelp https://github.com/riverscn/openwrt-iptvhelper' feeds.conf.default
+#cat feeds.conf.default |grep iptv
+#echo '====================Add IPtvhelp OK!===================='
 
 #添加rufengsuixing的AdGuardHome插件
 git clone https://github.com/rufengsuixing/luci-app-adguardhome.git package/lean/luci-app-adguardhome
@@ -40,23 +22,39 @@ echo 'https://static.adguard.com/adguardhome/release/AdGuardHome_linux_armv5.tar
 cat package/lean/luci-app-adguardhome/root/usr/share/AdGuardHome/links.txt
 echo '====================Add AdGuardHome Plug OK!===================='
 
-#添加likanchen的K3屏幕插件
-git clone https://github.com/likanchen/luci-app-k3screenctrl.git package/lean/luci-app-k3screenctrl
+#添加lwz322的K3屏幕插件
+git clone https://github.com/lwz322/luci-app-k3screenctrl.git package/lean/luci-app-k3screenctrl
 ls -la package/lean/ |grep luci-app-k3screenctrl
 echo '====================Add k3screen Plug OK!===================='
 
-#替换likanchen的K3屏幕驱动
+#替换lwz322的K3屏幕驱动
 rm -rf package/lean/k3screenctrl
-git clone https://github.com/likanchen/k3screenctrl_build.git package/lean/k3screenctrl/
-sed -i 's/@TARGET_bcm53xx_DEVICE_phicomm-k3 +@KERNEL_DEVMEM +//g' package/lean/k3screenctrl/Makefile
+git clone https://github.com/lwz322/k3screenctrl_build.git package/lean/k3screenctrl/
+#sed -i 's/@TARGET_bcm53xx_DEVICE_phicomm-k3 +@KERNEL_DEVMEM //g' package/lean/k3screenctrl/Makefile
 cat package/lean/k3screenctrl/Makefile |grep DEPENDS
 echo '====================Add k3screen Drive OK!===================='
 
-#替换K3的无线驱动
-wget -nv https://github.com/Hill-98/phicommk3-firmware/archive/master.zip -O package/lean/k3-brcmfmac4366c-firmware/files/lib/firmware/brcm/master.zip
-unzip package/lean/k3-brcmfmac4366c-firmware/files/lib/firmware/brcm/master.zip -d package/lean/k3-brcmfmac4366c-firmware/files/lib/firmware/brcm/
-mv package/lean/k3-brcmfmac4366c-firmware/files/lib/firmware/brcm/phicommk3-firmware-master/brcmfmac4366c-pcie.bin.69027 package/lean/k3-brcmfmac4366c-firmware/files/lib/firmware/brcm/brcmfmac4366c-pcie.bin
-rm -rf package/lean/k3-brcmfmac4366c-firmware/files/lib/firmware/brcm/master.zip
-rm -rf package/lean/k3-brcmfmac4366c-firmware/files/lib/firmware/brcm/phicommk3-firmware-master
-ls -la package/lean/k3-brcmfmac4366c-firmware/files/lib/firmware/brcm/ |grep 4366c
-echo '====================Delete temp or release files!===================='
+#移除bcm53xx中的其他机型
+sed -i '141,414d' target/linux/bcm53xx/image/Makefile
+sed -i '150,182d' target/linux/bcm53xx/image/Makefile
+sed -i 's/k3screenctrl/luci-app-k3screenctrl/g' target/linux/bcm53xx/image/Makefile
+cat target/linux/bcm53xx/image/Makefile |grep DEVICE_PACKAGES
+echo '====================Remove other devices of bcm53xx!===================='
+
+#替换K3的无线驱动为ac86u
+#wget -nv https://github.com/Hill-98/phicommk3-firmware/raw/master/brcmfmac4366c-pcie.bin.ac88u
+#mv brcmfmac4366c-pcie.bin.ac88u package/lean/k3-brcmfmac4366c-firmware/files/lib/firmware/brcm/brcmfmac4366c-pcie.bin
+#chmod 0644 package/lean/k3-brcmfmac4366c-firmware/files/lib/firmware/brcm/brcmfmac4366c-pcie.bin
+#echo '====================Replace k3wireless firmware OK!===================='
+
+#替换K3的无线驱动为asus-dhd24
+wget -nv https://github.com/Hill-98/phicommk3-firmware/raw/master/brcmfmac4366c-pcie.bin.asus-dhd24
+mv brcmfmac4366c-pcie.bin.asus-dhd24 package/lean/k3-brcmfmac4366c-firmware/files/lib/firmware/brcm/brcmfmac4366c-pcie.bin
+#chmod 0644 package/lean/k3-brcmfmac4366c-firmware/files/lib/firmware/brcm/brcmfmac4366c-pcie.bin
+echo '====================Replace k3wireless firmware OK!===================='
+
+#替换K3的无线驱动为69027
+#wget -nv https://github.com/Hill-98/phicommk3-firmware/raw/master/brcmfmac4366c-pcie.bin.69027
+#mv brcmfmac4366c-pcie.bin.69027 package/lean/k3-brcmfmac4366c-firmware/files/lib/firmware/brcm/brcmfmac4366c-pcie.bin
+#chmod 0644 package/lean/k3-brcmfmac4366c-firmware/files/lib/firmware/brcm/brcmfmac4366c-pcie.bin
+#echo '====================Replace k3wireless firmware OK!===================='
